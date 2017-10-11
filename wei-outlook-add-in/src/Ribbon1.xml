@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="Ribbon_Load">
+  <ribbon>
+    <tabs>
+      <tab id="TabWei" label="Wei Add-In">
+        <group id="grpReply" label="Response Options">
+          <toggleButton id="btnNoReplyAll"
+                        screentip="No Reply All"
+                        supertip="Prevent recipients within the same organisation from replying to all"
+                        label="No Reply All"
+                        size="large"
+                        tag="2"
+                        onAction="GroupReply_Click"
+                        getPressed="GroupReply_IsPressed"
+                        getImage="GroupReply_GetImage"
+                        getEnabled="GroupReply_IsEnabled"/>
+          <toggleButton id="btnNoReply"
+                        screentip="No Reply"
+                        supertip="Prevent recipients within the same organisation from replying"
+                        label="No Reply"
+                        size="large"
+                        tag="1"
+                        onAction="GroupReply_Click"
+                        getPressed="GroupReply_IsPressed"
+                        getImage="GroupReply_GetImage"
+                        getEnabled="GroupReply_IsEnabled"/>
+          <toggleButton id="btnNoForward"
+                        screentip="No Forward"
+                        supertip="Prevent recipients within the same organisation from forwarding"
+                        label="No Forward"
+                        size="large"
+                        tag="3"
+                        onAction="GroupReply_Click"
+                        getPressed="GroupReply_IsPressed"
+                        getImage="GroupReply_GetImage"
+                        getEnabled="GroupReply_IsEnabled"/>
+        </group>
+        <group id="GroupBackup" label="Backup">
+          <button id="btnBackupEmail"
+                  screentip="Backup an email"
+                  supertip="Backup an email to folders in month"
+                  label="Backup email"
+                  size="large"
+                  tag="BackupEmail"
+                  onAction="btnBackupEmail_Click"
+                  getImage="Button_GetImage"/>
+        </group>
+        <group id="GroupPriority" label="Priority">
+          <button id="btnHighPriorityEmail"
+                  screentip="Prioritize an email to high priority"
+                  supertip="Prioritize an email to high priority"
+                  label="High priority"
+                  size="large"
+                  tag="HighPriorityEmail"
+                  onAction="btnHighPriorityEmail_Click"
+                  getImage="GroupPriority_GetImage"/>
+          <button id="btnNormalPriorityEmail"
+                  screentip="Prioritize an email to normal priority"
+                  supertip="Prioritize an email to normal priority"
+                  label="Normal priority"
+                  size="large"
+                  tag="NormalPriorityEmail"
+                  onAction="btnNormalPriorityEmail_Click"
+                  getImage="GroupPriority_GetImage"/>
+          <button id="btnProject1Email"
+                  screentip="Project 1 email"
+                  supertip="Project 1 email"
+                  label="Project 1 email"
+                  size="large"
+                  tag="Project1Email"
+                  onAction="btnProject1Email_Click"
+                  getImage="GroupPriority_GetImage"/>
+          <button id="btnProject2Email"
+                  screentip="Project 2 email"
+                  supertip="Project 2 email"
+                  label="Project 2 email"
+                  size="large"
+                  tag="Project2Email"
+                  onAction="btnProject2Email_Click"
+                  getImage="GroupPriority_GetImage"/>
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+  <backstage>
+    <tab id="TabWeiAddIn" insertBeforeMso="TabHelp" label="Wei Add-In">
+      <firstColumn>
+        <group id="grpOptions" label="Default Message States">
+          <topItems>
+            <checkBox id="chkNoReplyAll"
+                      label="Disable reply all for new messages"
+                      tag="DisableReplyAllForNewMsg"
+                      getPressed="Flag_GetPressed"
+                      onAction="Flag_Action" />
+          </topItems>
+        </group>
+        <group id="autoBccOptions" label="Auto BCC">
+          <topItems>
+            <checkBox id="chkAutoBcc"
+                      label="Automatically BCC for each sending email"
+                      tag="EnableAutoBcc"
+                      getPressed="Flag_GetPressed"
+                      onAction="Flag_Action" />
+            <checkBox id="chkAutoDetectCurrentAccountEmailAddr"
+                      label="Automatically detect the email address of current account"
+                      tag="AutoDetectCurrentAccountEmailAddr"
+                      getPressed="Flag_GetPressed"
+                      onAction="Flag_Action"/>
+            <editBox id="editBoxAutoBccEmailAddr"
+                     label="Auto BCC address"
+                     expand="horizontal"
+                     tag="AutoBccEmailAddr"
+                     getText="EditBox_GetText"
+                     onChange="EditBox_OnChange"/>
+          </topItems>
+        </group>
+        <group id="backupEmailOptions" label="Backup Email">
+          <topItems>
+            <checkBox id="chkAutoBackupEmailFromMe"
+                      label="Automatically backup emails sending from me"
+                      tag="EnableAutoBackupEmailFromMe"
+                      getPressed="Flag_GetPressed"
+                      onAction="Flag_Action"/>
+            <checkBox id="chkAutoDetectMyEmailAddr"
+                      label="Automatically detect my email address"
+                      tag="AutoDetectMyEmailAddr"
+                      getPressed="Flag_GetPressed"
+                      onAction="Flag_Action"/>
+            <editBox id="editBoxAutoBackupMyEmailAddr"
+                     label="My email address"
+                     expand="horizontal"
+                     tag="AutoBackupMyEmailAddr"
+                     getText="EditBox_GetText"
+                     onChange="EditBox_OnChange"/>
+            <editBox id="editBoxAutoBackupPstPathNamePattern"
+                     label="PST path name pattern"
+                     expand="horizontal"
+                     tag="AutoBackupPstPathNamePattern"
+                     getText="EditBox_GetText"
+                     onChange="EditBox_OnChange"/>
+            <editBox id="editBoxAutoBackupOutlookDataFileNamePattern"
+                     label="Outlook data file name pattern"
+                     expand="horizontal"
+                     tag="AutoBackupOutlookDataFileNamePattern"
+                     getText="EditBox_GetText"
+                     onChange="EditBox_OnChange"/>
+            <editBox id="editBoxAutoBackupOutlookFolderNamePattern"
+                     label="Outlook folder name pattern"
+                     expand="horizontal"
+                     tag="AutoBackupOutlookFolderNamePattern"
+                     getText="EditBox_GetText"
+                     onChange="EditBox_OnChange"/>
+            <checkBox id="chkSaveAttachmentsToLocalFolderWhenBackup"
+                      label="Save email attachments to local folder when backup"
+                      tag="SaveAttachmentsToLocalFolderWhenBackup"
+                      getPressed="Flag_GetPressed"
+                      onAction="Flag_Action"/>
+            <editBox id="editBoxAttachmentsSavingFolder"
+                     label="The folder where attachments are saved"
+                     expand="horizontal"
+                     tag="AttachmentsSavingFolder"
+                     getText="EditBox_GetText"
+                     onChange="EditBox_OnChange"/>
+            <checkBox id="chkDeleteAttachmentsWhenBackup"
+                      label="Delete email attachments to local folder when backup"
+                      tag="DeleteAttachmentsWhenBackup"
+                      getPressed="Flag_GetPressed"
+                      onAction="Flag_Action"/>
+            <checkBox id="chkAddAttachmentsLinkToEmailEndWhenDelete"
+                      label="Add links to the email attachments local backup in the end of the email"
+                      tag="AddAttachmentsLinkToEmailEndWhenDelete"
+                      getPressed="Flag_GetPressed"
+                      onAction="Flag_Action"/>
+          </topItems>
+        </group>
+      </firstColumn>
+    </tab>
+  </backstage>
+</customUI>
