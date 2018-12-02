@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Config>
+  <Zoom>150</Zoom>
+
+  <AutoBackupEmailFromMe>true</AutoBackupEmailFromMe>
+  <MyEmailAddress>wei.hu.tw@outlook.com</MyEmailAddress>
+  <EmailBackupPath>c:\EmailBackup</EmailBackupPath>
+  <AttachmentBackupPath>c:\Documents</AttachmentBackupPath>
+
+  <EnableAutoBcc>true</EnableAutoBcc>
+  <AutoBccEmailAddress>wei.hu.tw@outlook.com</AutoBccEmailAddress>
+
+  <!-- or Simplified -->
+  <DefaultChinese>Traditional</DefaultChinese>
+  <SimplifiedChineseDept startsWith="OOO"/>
+  <SimplifiedChineseDept startsWith="XXX"/>
+  <TraditionalChineseDept startsWith="UUU"/>
+  <TraditionalChineseDept startsWith="TTT"/>
+
+  <!-- Put a 64x64 png file, named by label for each category -->
+  <Category label="High priority" color="olCategoryColorBlue"/>
+  <Category label="Low priority" color="olCategoryColorDarkOlive"/>
+
+  <FixedReply label="Done" text="&lt;p class=&quot;MsoNormal&quot;&gt;Dear Requester,&lt;br&gt;&lt;br&gt;Done!&lt;br&gt;&lt;br&gt;Wei.&lt;/p&gt;"/>
+</Config>

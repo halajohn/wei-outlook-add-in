@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="Ribbon_Load">
+  <ribbon>
+    <tabs>
+      <tab id="TabWei" label="Wei Add-In">
+        <group id="GroupBackup" label="Backup">
+          <button id="btnBackupEmail"
+                  screentip="Backup email"
+                  supertip="Backup email"
+                  label="Backup email"
+                  size="large"
+                  tag="BackupEmail"
+                  onAction="BtnBackupEmail_Click"
+                  getImage="GetBackupEmailImage"/>
+        </group>
+        <group id="GroupAction" label="Action">
+          <dynamicMenu id="dynamicMenuCategory"
+                  label="Change Category"
+                  getContent="GetDynamicMenuCategoryContent"/>
+          <dynamicMenu id="dynamicMenuFixedReply"
+                  label="Fixed Reply"
+                  getContent="GetDynamicMenuFixedReplyContent"/>
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>
