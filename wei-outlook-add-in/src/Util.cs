@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
@@ -17,14 +16,12 @@ namespace wei_outlook_add_in {
             }
         }
 
-        internal static bool IsMailItem(object obj) {
-            return (string)obj.GetType().InvokeMember("MessageClass", BindingFlags.GetProperty, null, obj, null) == "IPM.Note";
-        }
-
         internal static string OutlookVersion() {
             string version = Globals.ThisAddIn.Application.Version;
             if (version.StartsWith("16")) {
                 return "2016";
+            } else if (version.StartsWith("15")) {
+                return "2013";
             } else {
                 return "unknown";
             }

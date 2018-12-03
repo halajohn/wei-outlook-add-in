@@ -10,7 +10,6 @@ namespace wei_outlook_add_in {
         private Dictionary<Guid, InspectorWrapper> WrappedInspectors;
         private Outlook.Explorer Explorer;
         private Redemption.SafeExplorer sExplorer;
-        private string lastMailItemEntryID = null;
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e) {
             Config.ReadFromFile();
@@ -25,7 +24,6 @@ namespace wei_outlook_add_in {
 
             Explorer = Globals.ThisAddIn.Application.ActiveExplorer();
             Explorer.SelectionChange += new Outlook.ExplorerEvents_10_SelectionChangeEventHandler(ExplorerSelectionChange);
-            Explorer.FolderSwitch += new Outlook.ExplorerEvents_10_FolderSwitchEventHandler(ExplorerFolderSwitch);
 
             Application.ItemSend += new Outlook.ApplicationEvents_11_ItemSendEventHandler(ApplicationItemSend);
             Application.NewMailEx += new Outlook.ApplicationEvents_11_NewMailExEventHandler(ApplicationNewMailEx);
@@ -52,50 +50,47 @@ namespace wei_outlook_add_in {
             WrappedInspectors.Remove(id);
         }
 
-        private void ExplorerSelectionChange() {
-            try {
-                if (Explorer.Selection.Count > 0) {
-                    Outlook.MailItem mailItem = Explorer.Selection[1] as Outlook.MailItem;
-                    Debug.Assert(mailItem != null);
+        // The implementation here is the best I can do.
+        // drawback:
+        // 1) click an email in a folder at the first time would not zoom it.
+        // 2) it's best to disable "show as conversations" of all folders
+        private void ExplorerSelectionChange_() {
+            System.Windows.Forms.Application.DoEvents();
 
-                    Microsoft.Office.Interop.Word.Document wdDoc;
-                    if (Util.OutlookVersion() == "2016") {
-                        var previewPane = Explorer.GetType().InvokeMember("PreviewPane", BindingFlags.GetProperty, null, Explorer, null);
+            if (Explorer.Selection.Count > 0) {
+                Outlook.MailItem mailItem = Explorer.Selection[1] as Outlook.MailItem;
+                Debug.Assert(mailItem != null);
+
+                Microsoft.Office.Interop.Word.Document wdDoc = null;
+                if (Util.OutlookVersion() == "2016") {
+                    var previewPane = Explorer.GetType().InvokeMember("PreviewPane", BindingFlags.GetProperty, null, Explorer, null);
+                    try {
                         wdDoc = (Microsoft.Office.Interop.Word.Document)previewPane.GetType().InvokeMember("WordEditor", BindingFlags.GetProperty, null, previewPane, null);
-                    } else if (Util.OutlookVersion() == "2013") {
-                        sExplorer.Item = Explorer;
-                        wdDoc = sExplorer.ReadingPane.WordEditor;
-                    } else {
-                        Debug.Assert(false);
-                        wdDoc = null;
+                    } catch (TargetInvocationException ex) {
+                        Debug.Print(ex.ToString());
                     }
-
-                    Microsoft.Office.Interop.Word.Zoom zoom = wdDoc.Windows[1].View.Zoom;
-
-                    Outlook.MailItem lastMailItem = null;
-                    if (lastMailItemEntryID != null) {
-                        lastMailItem = Application.Session.GetItemFromID(lastMailItemEntryID);
-                    }
-                    if (lastMailItem != null) {
-                        if (lastMailItem.EntryID == mailItem.EntryID) {
-                            if (zoom.Percentage == Config.Zoom) {
-                                return;
-                            }
-                        }
-                    }
-
-                    (mailItem as Outlook.MailItem).UnRead = !(mailItem as Outlook.MailItem).UnRead;
-                    (mailItem as Outlook.MailItem).UnRead = !(mailItem as Outlook.MailItem).UnRead;
-                    zoom.Percentage = Config.Zoom;
-
-                    lastMailItemEntryID = mailItem.EntryID;
+                } else if (Util.OutlookVersion() == "2013") {
+                    sExplorer.Item = Explorer;
+                    wdDoc = sExplorer.ReadingPane.WordEditor;
+                } else {
+                    Debug.Assert(false);
+                    wdDoc = null;
                 }
-            } catch (System.Reflection.TargetInvocationException) {
+
+                if (wdDoc != null) {
+                    Microsoft.Office.Interop.Word.Zoom zoom = wdDoc.Windows[1].View.Zoom;
+                    zoom.Percentage = Config.Zoom;
+                }
             }
         }
 
-        private void ExplorerFolderSwitch() {
-            lastMailItemEntryID = null;
+        private void ExplorerSelectionChange() {
+            ExplorerSelectionChange_();
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
 
         // Although NewMailEx event is triggered before outlook rule processing, these 2 run asynchronized,
@@ -128,6 +123,8 @@ namespace wei_outlook_add_in {
                 if (mailItem != null) {
                     FilterEmailUtil.FilterOutUnwantedEmail(mailItem);
                     if (Config.AutoBackupEmailFromMe == true && Util.GetSenderSMTPAddress(mailItem) == Config.MyEmailAddress) {
+                        mailItem.Categories = "";
+                        EmailFlagUtil.FlagEmail(mailItem);
                         BackupEmailUtil.BackupEmail(mailItem);
                     }
                 }

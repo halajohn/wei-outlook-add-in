@@ -129,7 +129,7 @@ namespace wei_outlook_add_in {
                             string location =
                                 Config.AttachmentBackupPath + (Config.AttachmentBackupPath.EndsWith(@"\") ? "" : @"\") +
                                 mailItem.Attachments[i].FileName;
-                            string uri = Regex.Replace(location, @"\\", @"/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                            string uri = Regex.Replace(location, @"\\", @"/", RegexOptions.IgnoreCase);
                             attachmentLinks += "<a href=\"file:///" + uri + "\">" + uri + @"</a><br>";
                         }
                     }
@@ -142,7 +142,7 @@ namespace wei_outlook_add_in {
                     mailItem.HTMLBody = Regex.Replace(mailItem.HTMLBody,
                         @"</body>",
                         @"<br>" + attachmentLinks + @"</body>",
-                        RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                        RegexOptions.IgnoreCase);
                     mailItem.Save();
                 }
             }
@@ -202,7 +202,6 @@ namespace wei_outlook_add_in {
                 mailItem.Close(Outlook.OlInspectorClose.olSave);
             } else {
                 mailItem.UnRead = false;
-                mailItem.Categories = "";
                 mailItem.Save();
 
                 AddAttachmentLinkToBodyEnd(mailItem);

@@ -91,8 +91,8 @@ namespace wei_outlook_add_in {
                 stringBuilder
                     .Append(@"<button")
                     .Append(@" id=""").Append(id).Append(@"""")
-                    .Append(@" label=""").Append(category).Append(@"""")
-                    .Append(@" tag=""").Append(category).Append(@"""")
+                    .Append(@" label=""").Append(category.label).Append(@"""")
+                    .Append(@" tag=""").Append(category.label).Append(@"""")
                     .Append(@" onAction=""OnCategoriesAction""")
                     .Append(@" getImage=""getCategoriesImage""/>");
             }
@@ -128,7 +128,7 @@ namespace wei_outlook_add_in {
             }
         }
 
-        public Bitmap getCategoriesImage(Office.IRibbonControl control) {
+        public Bitmap GetCategoriesImage(Office.IRibbonControl control) {
             string userProfileFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             string imageFilename = userProfileFolder + @"\wei-outlook-add-in\" + control.Tag + @".png";
             return new Bitmap(imageFilename);
@@ -140,9 +140,9 @@ namespace wei_outlook_add_in {
             foreach (FixedReplyUtil.Data fixedReply in Config.FixedReplies) {
                 string id = Util.FromLabelToId(fixedReply.label);
 
-                string text = Regex.Replace(fixedReply.text, @"<", @"&lt;", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                text = Regex.Replace(text, @">", @"&gt;", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                text = Regex.Replace(text, @"""", @"&quot;", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                string text = Regex.Replace(fixedReply.text, @"<", @"&lt;", RegexOptions.IgnoreCase);
+                text = Regex.Replace(text, @">", @"&gt;", RegexOptions.IgnoreCase);
+                text = Regex.Replace(text, @"""", @"&quot;", RegexOptions.IgnoreCase);
 
                 stringBuilder
                     .Append(@"<button")
@@ -187,7 +187,7 @@ namespace wei_outlook_add_in {
             }
         }
 
-        public Bitmap getFixedRepliesImage(Office.IRibbonControl control) {
+        public Bitmap GetFixedRepliesImage(Office.IRibbonControl control) {
             string userProfileFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             string imageFilename = userProfileFolder + @"\wei-outlook-add-in\" + Util.FromIdToLabel(control.Id) + @".png";
             return new Bitmap(imageFilename);

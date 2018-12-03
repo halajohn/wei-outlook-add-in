@@ -19,16 +19,20 @@ namespace wei_outlook_add_in {
                 answer = true;
             }
 
-            Outlook.SimpleItems items = conv.GetChildren(mailItem);
-            if (items.Count > 0) {
-                foreach (object myItem in items) {
-                    if (myItem is Outlook.MailItem) {
-                        bool result = IsMailItemOrAnyItsChildrenFlagged(myItem as Outlook.MailItem, conv);
-                        if (result == true) {
-                            answer = true;
+            try {
+                Outlook.SimpleItems items = conv.GetChildren(mailItem);
+                if (items.Count > 0) {
+                    foreach (object myItem in items) {
+                        if (myItem is Outlook.MailItem) {
+                            bool result = IsMailItemOrAnyItsChildrenFlagged(myItem as Outlook.MailItem, conv);
+                            if (result == true) {
+                                answer = true;
+                            }
                         }
                     }
                 }
+            } catch (System.Runtime.InteropServices.COMException ex) {
+                Debug.Print(ex.ToString());
             }
 
             ClearMailItemFlagIfItsInSentItemFolder(mailItem);

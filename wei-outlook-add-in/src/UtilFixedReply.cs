@@ -19,7 +19,7 @@ namespace wei_outlook_add_in {
             mailItem.HTMLBody = Regex.Replace(mailItem.HTMLBody,
                 @"(<body[^>]*>)",
                 stringBuilder.ToString(),
-                RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                RegexOptions.IgnoreCase);
         }
     }
 }

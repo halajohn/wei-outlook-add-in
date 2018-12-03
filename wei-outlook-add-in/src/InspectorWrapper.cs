@@ -18,13 +18,24 @@ namespace wei_outlook_add_in {
             ((Outlook.InspectorEvents_10_Event)Inspector).Activate += new Outlook.InspectorEvents_10_ActivateEventHandler(Activate);
         }
 
-        private void Inspector_Close() {
+        private void Inspector_Close_() {
             ((Outlook.InspectorEvents_10_Event)Inspector).Close -= new Outlook.InspectorEvents_10_CloseEventHandler(Inspector_Close);
             ((Outlook.InspectorEvents_10_Event)Inspector).Activate -= new Outlook.InspectorEvents_10_ActivateEventHandler(Activate);
             Closed?.Invoke(Id);
         }
 
+        private void Inspector_Close() {
+            Inspector_Close_();
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
+
         protected virtual void Activate() {
+            System.Windows.Forms.Application.DoEvents();
+
             Microsoft.Office.Interop.Word.Document wdDoc = Util.GetWordEditor(Inspector);
             if (wdDoc != null) {
                 wdDoc.Windows[1].View.Zoom.Percentage = Config.Zoom;
@@ -32,7 +43,7 @@ namespace wei_outlook_add_in {
         }
 
         public static InspectorWrapper GetWrapperFor(Outlook.Inspector inspector) {
-            if (true == Util.IsMailItem(inspector.CurrentItem as object)) {
+            if (inspector.CurrentItem is Outlook.MailItem) {
                 return new InspectorWrapper(inspector);
             } else {
                 return null;
