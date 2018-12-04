@@ -34,8 +34,6 @@ namespace wei_outlook_add_in {
         }
 
         protected virtual void Activate() {
-            System.Windows.Forms.Application.DoEvents();
-
             Microsoft.Office.Interop.Word.Document wdDoc = Util.GetWordEditor(Inspector);
             if (wdDoc != null) {
                 wdDoc.Windows[1].View.Zoom.Percentage = Config.Zoom;
