@@ -194,7 +194,7 @@ namespace wei_outlook_add_in {
             return (parentFolder.FolderPath == backupFolder.FolderPath);
         }
 
-        internal static void MarkEmailUnreadAndClearAllCategories(Outlook.MailItem mailItem) {
+        internal static void MarkEmailReadAndClearAllCategories(Outlook.MailItem mailItem) {
             mailItem.UnRead = false;
             mailItem.Categories = "";
             mailItem.Save();

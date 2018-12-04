@@ -122,7 +122,7 @@ namespace wei_outlook_add_in {
                 if (mailItem != null) {
                     FilterEmailUtil.FilterOutUnwantedEmail(mailItem);
                     if (Config.AutoBackupEmailFromMe == true && Util.GetSenderSMTPAddress(mailItem) == Config.MyEmailAddress) {
-                        BackupEmailUtil.MarkEmailUnreadAndClearAllCategories(mailItem);
+                        BackupEmailUtil.MarkEmailReadAndClearAllCategories(mailItem);
                         EmailFlagUtil.FlagEmail(mailItem);
                         BackupEmailUtil.BackupEmail(mailItem);
                     }

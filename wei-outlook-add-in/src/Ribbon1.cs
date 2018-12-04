@@ -59,7 +59,7 @@ namespace wei_outlook_add_in {
                     if (BackupEmailUtil.IsEmailAlreadyInBackupFolder(mailItem)) {
                         mailItem.Close(Outlook.OlInspectorClose.olSave);
                     } else {
-                        BackupEmailUtil.MarkEmailUnreadAndClearAllCategories(mailItem);
+                        BackupEmailUtil.MarkEmailReadAndClearAllCategories(mailItem);
                         EmailFlagUtil.FlagEmail(mailItem);
                         BackupEmailUtil.BackupEmail(mailItem);
                     }
@@ -81,7 +81,7 @@ namespace wei_outlook_add_in {
                         mailItem = selected as Outlook.MailItem;
                         if (mailItem != null) {
                             if (BackupEmailUtil.IsEmailAlreadyInBackupFolder(mailItem) == false) {
-                                BackupEmailUtil.MarkEmailUnreadAndClearAllCategories(mailItem);
+                                BackupEmailUtil.MarkEmailReadAndClearAllCategories(mailItem);
                                 BackupEmailUtil.BackupEmail(mailItem);
                             }
                         }
