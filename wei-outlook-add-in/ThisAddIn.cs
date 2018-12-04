@@ -55,8 +55,6 @@ namespace wei_outlook_add_in {
         // 1) click an email in a folder at the first time would not zoom it.
         // 2) it's best to disable "show as conversations" of all folders
         private void ExplorerSelectionChange_() {
-            System.Windows.Forms.Application.DoEvents();
-
             if (Explorer.Selection.Count > 0) {
                 Outlook.MailItem mailItem = Explorer.Selection[1] as Outlook.MailItem;
 
