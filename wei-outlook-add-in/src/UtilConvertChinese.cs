@@ -59,22 +59,22 @@ namespace wei_outlook_add_in {
             return false;
         }
 
-        private static bool IsDepartmentUsingSimplfiedChinese(List<string> deps) {
+        private static bool IsAllDepartmentUsingSimplfiedChinese(List<string> deps) {
             foreach (string dep in deps) {
-                if (IsDepartmentUsingSimplfieidChinese(dep) == true) {
-                    return true;
+                if (IsDepartmentUsingSimplfieidChinese(dep) == false) {
+                    return false;
                 }
             }
-            return false;
+            return true;
         }
 
-        private static bool IsDepartmentUsingTraditionalChinese(List<string> deps) {
+        private static bool IsAllDepartmentUsingTraditionalChinese(List<string> deps) {
             foreach (string dep in deps) {
-                if (IsDepartmentUsingTraditionalChinese(dep) == true) {
-                    return true;
+                if (IsDepartmentUsingTraditionalChinese(dep) == false) {
+                    return false;
                 }
             }
-            return false;
+            return true;
         }
 
         private static List<string> GetAllToRecipientDepartment(Outlook.MailItem mailItem) {
@@ -95,9 +95,9 @@ namespace wei_outlook_add_in {
             Debug.Assert(mailItem != null);
 
             List<string> deps = GetAllToRecipientDepartment(mailItem);
-            if (IsDepartmentUsingSimplfiedChinese(deps) == true) {
+            if (IsAllDepartmentUsingSimplfiedChinese(deps) == true) {
                 ConvertEmailChinese(mailItem, ChineseType.SimplifiedChinese);
-            } else if (IsDepartmentUsingTraditionalChinese(deps) == true) {
+            } else if (IsAllDepartmentUsingTraditionalChinese(deps) == true) {
                 ConvertEmailChinese(mailItem, ChineseType.TraditionalChinese);
             } else {
                 switch (Config.DefaultChinese) {

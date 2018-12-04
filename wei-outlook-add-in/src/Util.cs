@@ -84,5 +84,12 @@ namespace wei_outlook_add_in {
             }
             return string.Concat(tokens);
         }
+
+        internal static string MakeValidFileName(string fileName) {
+            foreach (char c in System.IO.Path.GetInvalidFileNameChars()) {
+                fileName = fileName.Replace(c, '_');
+            }
+            return fileName;
+        }
     }
 }

@@ -59,27 +59,28 @@ namespace wei_outlook_add_in {
 
             if (Explorer.Selection.Count > 0) {
                 Outlook.MailItem mailItem = Explorer.Selection[1] as Outlook.MailItem;
-                Debug.Assert(mailItem != null);
 
-                Microsoft.Office.Interop.Word.Document wdDoc = null;
-                if (Util.OutlookVersion() == "2016") {
-                    var previewPane = Explorer.GetType().InvokeMember("PreviewPane", BindingFlags.GetProperty, null, Explorer, null);
-                    try {
-                        wdDoc = (Microsoft.Office.Interop.Word.Document)previewPane.GetType().InvokeMember("WordEditor", BindingFlags.GetProperty, null, previewPane, null);
-                    } catch (TargetInvocationException ex) {
-                        Debug.Print(ex.ToString());
+                if (mailItem != null) {
+                    Microsoft.Office.Interop.Word.Document wdDoc = null;
+                    if (Util.OutlookVersion() == "2016") {
+                        var previewPane = Explorer.GetType().InvokeMember("PreviewPane", BindingFlags.GetProperty, null, Explorer, null);
+                        try {
+                            wdDoc = (Microsoft.Office.Interop.Word.Document)previewPane.GetType().InvokeMember("WordEditor", BindingFlags.GetProperty, null, previewPane, null);
+                        } catch (TargetInvocationException ex) {
+                            Debug.Print(ex.ToString());
+                        }
+                    } else if (Util.OutlookVersion() == "2013") {
+                        sExplorer.Item = Explorer;
+                        wdDoc = sExplorer.ReadingPane.WordEditor;
+                    } else {
+                        Debug.Assert(false);
+                        wdDoc = null;
                     }
-                } else if (Util.OutlookVersion() == "2013") {
-                    sExplorer.Item = Explorer;
-                    wdDoc = sExplorer.ReadingPane.WordEditor;
-                } else {
-                    Debug.Assert(false);
-                    wdDoc = null;
-                }
 
-                if (wdDoc != null) {
-                    Microsoft.Office.Interop.Word.Zoom zoom = wdDoc.Windows[1].View.Zoom;
-                    zoom.Percentage = Config.Zoom;
+                    if (wdDoc != null) {
+                        Microsoft.Office.Interop.Word.Zoom zoom = wdDoc.Windows[1].View.Zoom;
+                        zoom.Percentage = Config.Zoom;
+                    }
                 }
             }
         }
@@ -123,7 +124,7 @@ namespace wei_outlook_add_in {
                 if (mailItem != null) {
                     FilterEmailUtil.FilterOutUnwantedEmail(mailItem);
                     if (Config.AutoBackupEmailFromMe == true && Util.GetSenderSMTPAddress(mailItem) == Config.MyEmailAddress) {
-                        mailItem.Categories = "";
+                        BackupEmailUtil.MarkEmailUnreadAndClearAllCategories(mailItem);
                         EmailFlagUtil.FlagEmail(mailItem);
                         BackupEmailUtil.BackupEmail(mailItem);
                     }

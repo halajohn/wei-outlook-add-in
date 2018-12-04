@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Outlook = Microsoft.Office.Interop.Outlook;
@@ -108,7 +109,7 @@ namespace wei_outlook_add_in {
             }
         }
 
-        private static void AddAttachmentLinkToBodyEnd(Outlook.MailItem mailItem) {
+        private static void AddAttachmentLinkToBodyEndAndSaveToDisk(Outlook.MailItem mailItem) {
             if (mailItem.Attachments.Count > 0) {
                 string attachmentLinks = "";
 
@@ -129,6 +130,20 @@ namespace wei_outlook_add_in {
                             string location =
                                 Config.AttachmentBackupPath + (Config.AttachmentBackupPath.EndsWith(@"\") ? "" : @"\") +
                                 mailItem.Attachments[i].FileName;
+
+                            try {
+                                mailItem.Attachments[i].SaveAsFile(location);
+                            } catch (FileLoadException) {
+                                location = Path.GetFileNameWithoutExtension(mailItem.Attachments[i].FileName);
+                                location += @"@___@" + Util.MakeValidFileName(mailItem.Subject);
+                                location += @"@___@" + Util.MakeValidFileName(mailItem.ReceivedTime.ToString());
+                                location += Path.GetExtension(mailItem.Attachments[i].FileName);
+
+                                location = Config.AttachmentBackupPath + (Config.AttachmentBackupPath.EndsWith(@"\") ? "" : @"\") + location;
+
+                                mailItem.Attachments[i].SaveAsFile(location);
+                            }
+
                             string uri = Regex.Replace(location, @"\\", @"/", RegexOptions.IgnoreCase);
                             attachmentLinks += "<a href=\"file:///" + uri + "\">" + uri + @"</a><br>";
                         }
@@ -144,28 +159,6 @@ namespace wei_outlook_add_in {
                         @"<br>" + attachmentLinks + @"</body>",
                         RegexOptions.IgnoreCase);
                     mailItem.Save();
-                }
-            }
-        }
-
-        private static void SaveAttachment(Outlook.MailItem mailItem) {
-            if (mailItem.Attachments.Count > 0) {
-                for (int i = 1; i <= mailItem.Attachments.Count; ++i) {
-                    if (AttachmentIsInlineImage(mailItem, mailItem.Attachments[i]) == false) {
-                        string fileName = "";
-                        try {
-                            fileName = mailItem.Attachments[i].FileName;
-                        } catch {
-                            // can not get the filename, then ignore this attachment.
-                        }
-
-                        if (fileName != "") {
-                            string location =
-                                Config.AttachmentBackupPath + (Config.AttachmentBackupPath.EndsWith(@"\") ? "" : @"\") +
-                                mailItem.Attachments[i].FileName;
-                            mailItem.Attachments[i].SaveAsFile(location);
-                        }
-                    }
                 }
             }
         }
@@ -194,22 +187,26 @@ namespace wei_outlook_add_in {
             }
         }
 
-        internal static void BackupEmail(Outlook.MailItem mailItem) {
+        internal static bool IsEmailAlreadyInBackupFolder(Outlook.MailItem mailItem) {
             Outlook.Folder backupFolder = GetBackupFolder(mailItem);
             Outlook.MAPIFolder parentFolder = mailItem.Parent as Outlook.MAPIFolder;
 
-            if (parentFolder.FolderPath == backupFolder.FolderPath) {
-                mailItem.Close(Outlook.OlInspectorClose.olSave);
-            } else {
-                mailItem.UnRead = false;
-                mailItem.Save();
+            return (parentFolder.FolderPath == backupFolder.FolderPath);
+        }
 
-                AddAttachmentLinkToBodyEnd(mailItem);
-                SaveAttachment(mailItem);
-                DeleteAttachment(mailItem);
+        internal static void MarkEmailUnreadAndClearAllCategories(Outlook.MailItem mailItem) {
+            mailItem.UnRead = false;
+            mailItem.Categories = "";
+            mailItem.Save();
+        }
 
-                mailItem.Move(backupFolder);
-            }
+        internal static void BackupEmail(Outlook.MailItem mailItem) {
+            Debug.Assert(IsEmailAlreadyInBackupFolder(mailItem) == false);
+
+            AddAttachmentLinkToBodyEndAndSaveToDisk(mailItem);
+            DeleteAttachment(mailItem);
+
+            mailItem.Move(GetBackupFolder(mailItem));
         }
     }
 }

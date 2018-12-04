@@ -273,7 +273,9 @@
     <EmbeddedResource Include="src\Ribbon1.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Backup email.png" />
+    <Content Include="Resources\Backup email.png" />
+    <Content Include="Resources\Categories.png" />
+    <Content Include="Resources\Fixed reply.png" />
     <Content Include="src\config.xml">
       <SubType>Designer</SubType>
     </Content>

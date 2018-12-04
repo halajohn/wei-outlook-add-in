@@ -1,6 +1,6 @@
 ﻿using System;
 using Outlook = Microsoft.Office.Interop.Outlook;
-//Outlook.Categories categories = Application.GetNamespace("MAPI").Categories;
+
 namespace wei_outlook_add_in {
     class CategoryUtil {
         internal class Data {

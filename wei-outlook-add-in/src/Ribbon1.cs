@@ -56,8 +56,13 @@ namespace wei_outlook_add_in {
             if (ControlIsInInspector(control, ref inspector) == true) {
                 mailItem = inspector.CurrentItem as Outlook.MailItem;
                 if (mailItem != null) {
-                    EmailFlagUtil.FlagEmail(mailItem);
-                    BackupEmailUtil.BackupEmail(mailItem);
+                    if (BackupEmailUtil.IsEmailAlreadyInBackupFolder(mailItem)) {
+                        mailItem.Close(Outlook.OlInspectorClose.olSave);
+                    } else {
+                        BackupEmailUtil.MarkEmailUnreadAndClearAllCategories(mailItem);
+                        EmailFlagUtil.FlagEmail(mailItem);
+                        BackupEmailUtil.BackupEmail(mailItem);
+                    }
                 }
             } else if (ControlIsInExplorer(control, ref explorer) == true) {
                 try {
@@ -67,13 +72,18 @@ namespace wei_outlook_add_in {
                     foreach (var selected in selection) {
                         mailItem = selected as Outlook.MailItem;
                         if (mailItem != null) {
-                            EmailFlagUtil.FlagEmail(mailItem);
+                            if (BackupEmailUtil.IsEmailAlreadyInBackupFolder(mailItem) == false) {
+                                EmailFlagUtil.FlagEmail(mailItem);
+                            }
                         }
                     }
                     foreach (var selected in selection) {
                         mailItem = selected as Outlook.MailItem;
                         if (mailItem != null) {
-                            BackupEmailUtil.BackupEmail(mailItem);
+                            if (BackupEmailUtil.IsEmailAlreadyInBackupFolder(mailItem) == false) {
+                                BackupEmailUtil.MarkEmailUnreadAndClearAllCategories(mailItem);
+                                BackupEmailUtil.BackupEmail(mailItem);
+                            }
                         }
                     }
                 } catch (COMException ex) {
@@ -99,6 +109,10 @@ namespace wei_outlook_add_in {
             stringBuilder.Append(@"</menu>");
 
             return stringBuilder.ToString();
+        }
+
+        public Bitmap GetDynamicMenuCategoryImage(Office.IRibbonControl control) {
+            return Resources.Categories;
         }
 
         public void OnCategoriesAction(Office.IRibbonControl control) {
@@ -155,6 +169,10 @@ namespace wei_outlook_add_in {
             stringBuilder.Append(@"</menu>");
 
             return stringBuilder.ToString();
+        }
+
+        public Bitmap GetDynamicMenuFixedReplyImage(Office.IRibbonControl control) {
+            return Resources.Fixed_reply;
         }
 
         public void OnFixedRepliesAction(Office.IRibbonControl control) {

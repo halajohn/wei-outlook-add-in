@@ -16,10 +16,12 @@
         <group id="GroupAction" label="Action">
           <dynamicMenu id="dynamicMenuCategory"
                   label="Change Category"
-                  getContent="GetDynamicMenuCategoryContent"/>
+                  getContent="GetDynamicMenuCategoryContent"
+                  getImage="GetDynamicMenuCategoryImage"/>
           <dynamicMenu id="dynamicMenuFixedReply"
                   label="Fixed Reply"
-                  getContent="GetDynamicMenuFixedReplyContent"/>
+                  getContent="GetDynamicMenuFixedReplyContent"
+                  getImage="GetDynamicMenuFixedReplyImage"/>
         </group>
       </tab>
     </tabs>
