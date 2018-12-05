@@ -47,7 +47,7 @@ namespace wei_outlook_add_in {
                 Debug.Assert(folder != null);
                 Outlook.Store store = folder.Store;
 
-                if (store.IsConversationEnabled == true) {
+                if ((store != null) && (store.IsConversationEnabled == true)) {
                     Outlook.Conversation conv = mailItem.GetConversation();
                     if (conv != null) {
                         Outlook.SimpleItems simpleItems = conv.GetRootItems();

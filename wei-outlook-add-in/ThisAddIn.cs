@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace wei_outlook_add_in {
@@ -56,8 +57,14 @@ namespace wei_outlook_add_in {
         // 2) it's best to disable "show as conversations" of all folders
         private void ExplorerSelectionChange_() {
             if (Explorer.Selection.Count > 0) {
-                Outlook.MailItem mailItem = Explorer.Selection[1] as Outlook.MailItem;
+                object msg = Explorer.Selection[1];
+                try {
+                    Explorer.RemoveFromSelection(msg);
+                    Explorer.AddToSelection(msg);
+                } catch (Exception) {
+                }
 
+                Outlook.MailItem mailItem = msg as Outlook.MailItem;
                 if (mailItem != null) {
                     Microsoft.Office.Interop.Word.Document wdDoc = null;
                     if (Util.OutlookVersion() == "2016") {
@@ -118,7 +125,13 @@ namespace wei_outlook_add_in {
             Outlook.NameSpace nameSpace = Application.GetNamespace("MAPI");
             string[] entryIds = EntryIDCollection.Split(',');
             for (int i = 0; i < entryIds.Length; ++i) {
-                Outlook.MailItem mailItem = nameSpace.GetItemFromID(entryIds[i]) as Outlook.MailItem;
+                Outlook.MailItem mailItem = null;
+
+                try {
+                    mailItem = nameSpace.GetItemFromID(entryIds[i]) as Outlook.MailItem;
+                } catch (COMException) {
+                }
+
                 if (mailItem != null) {
                     FilterEmailUtil.FilterOutUnwantedEmail(mailItem);
                     if (Config.AutoBackupEmailFromMe == true && Util.GetSenderSMTPAddress(mailItem) == Config.MyEmailAddress) {
