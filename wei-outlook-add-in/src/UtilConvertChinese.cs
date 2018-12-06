@@ -61,7 +61,7 @@ namespace wei_outlook_add_in {
 
         private static bool IsAllDepartmentUsingSimplfiedChinese(List<string> deps) {
             foreach (string dep in deps) {
-                if (IsDepartmentUsingSimplfieidChinese(dep) == false) {
+                if ((dep != null) && (IsDepartmentUsingSimplfieidChinese(dep) == false)) {
                     return false;
                 }
             }
@@ -70,7 +70,7 @@ namespace wei_outlook_add_in {
 
         private static bool IsAllDepartmentUsingTraditionalChinese(List<string> deps) {
             foreach (string dep in deps) {
-                if (IsDepartmentUsingTraditionalChinese(dep) == false) {
+                if ((dep != null) && (IsDepartmentUsingTraditionalChinese(dep) == false)) {
                     return false;
                 }
             }
